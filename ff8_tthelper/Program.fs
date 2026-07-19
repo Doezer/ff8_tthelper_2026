@@ -11,12 +11,12 @@ open System.Threading
 // Machine-specific paths are read from environment variables so the source
 // doesn't need editing on every new machine. See README.md for details.
 let private envOrDefault name defaultValue =
-    match Environment.GetEnvironmentVariable(name: string) with
+    match Environment.GetEnvironmentVariable(name) with
     | null | "" -> defaultValue
     | value -> value
 
 let private requiredEnv name explanation =
-    match Environment.GetEnvironmentVariable(name: string) with
+    match Environment.GetEnvironmentVariable(name) with
     | null | "" -> failwithf "Environment variable %s is not set. %s" name explanation
     | value -> value
 
