@@ -8,7 +8,19 @@ open Printf
 
 open System.Threading
 
-let logFile = @"C:\tmp\ff8helper_log.txt"
+// Machine-specific paths are read from environment variables so the source
+// doesn't need editing on every new machine. See README.md for details.
+let private envOrDefault name defaultValue =
+    match Environment.GetEnvironmentVariable(name) with
+    | null | "" -> defaultValue
+    | value -> value
+
+let private requiredEnv name explanation =
+    match Environment.GetEnvironmentVariable(name) with
+    | null | "" -> failwithf "Environment variable %s is not set. %s" name explanation
+    | value -> value
+
+let logFile = envOrDefault "FF8_LOG_FILE" (IO.Path.Combine(IO.Path.GetTempPath(), "ff8helper_log.txt"))
 let logStream = new IO.StreamWriter(logFile, true)
 
 let log msg =
@@ -17,7 +29,10 @@ let log msg =
     logStream.Flush()
     Console.WriteLine(toWrite)
     
-let screenCaptureDir = @"D:\Program Files\Steam\userdata\33243684\760\remote\39150\screenshots"
+let screenCaptureDir =
+    requiredEnv "FF8_SCREENSHOT_DIR"
+        "Set it to your Steam screenshot folder for FF8, e.g. \
+         <SteamLibrary>\\userdata\\<your Steam id3>\\760\\remote\\39150\\screenshots"
 let screenshotFilePattern = "????-??-??_?????.jpg"
 let screenshotHotKey = "F12"
 
@@ -47,7 +62,7 @@ let readGameStateFromScreenshot (screenshotPath: string) =
     ksprintf log "GameState read in %d ms" sw.ElapsedMilliseconds
     state
 
-let ahkProg = @"C:\Program Files\AutoHotkey\AutoHotkey.exe"
+let ahkProg = envOrDefault "FF8_AHK_EXE" @"C:\Program Files\AutoHotkey\AutoHotkey.exe"
 let sendScript = IO.Directory.GetCurrentDirectory() + @"\..\..\send.ahk"
 let sendKey key =
     let proc = Diagnostics.Process.Start(ahkProg, sendScript+" "+key)
