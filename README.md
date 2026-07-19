@@ -4,6 +4,8 @@ This program will autonomously play a game of Triple Triad within Final Fantasy 
 
 [![](http://img.youtube.com/vi/TWLy6QsqN-4/0.jpg)](http://www.youtube.com/watch?v=TWLy6QsqN-4 "AI in action")
 
+**There are two implementations here:** the original F# project (`ff8_tthelper/`, documented below) and a faithful Python port (`python/`, see [`python/README.md`](python/README.md)) validated against the same real screenshots the F# tests use. The Python port is the actively developed one going forward; the F# instructions below are kept for reference.
+
 ## Requirements
 
 This is a Windows-only tool:
